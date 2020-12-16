@@ -31,10 +31,12 @@
               size="mini"
               @click="update(row)"
             ></el-button>
+
             <el-button
               type="danger"
               icon="el-icon-delete"
               size="mini"
+              @click="delAttr(4400)"
             ></el-button>
           </template>
         </el-table-column>
@@ -155,6 +157,8 @@ export default {
     update(attr) {
       //此处改为用深度克隆防止对象还存在引用关系
       this.attr = JSON.parse(JSON.stringify(attr))
+
+      this.isShowList = false
     },
     //点击切换编辑模式
     edit(row) {
@@ -173,7 +177,7 @@ export default {
       }
       row.edit = false
     },
-    //添加属性
+    //添加属性值
     addAttrValue() {
       this.attr.attrValueList.push({
         edit: true,
@@ -182,9 +186,19 @@ export default {
         this.$refs.input.focus()
       })
     },
-    //删除属性
+    //删除属性值
     delAttrValue(index) {
       this.attr.attrValueList.splice(index, 1)
+    },
+    //删除属性
+    async delAttr(AttrId) {
+      console.log(AttrId)
+      const result = await this.$API.attrs.delAttr(AttrId)
+      if (result.code === 200) {
+        this.$message.success('属性删除成功~')
+      } else {
+        this.$message.success('属性删除失败~')
+      }
     },
     //保存数据
     async save() {

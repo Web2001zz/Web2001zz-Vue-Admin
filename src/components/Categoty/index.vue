@@ -2,7 +2,7 @@
   <div>
     <!-- 选择三级分类列表 -->
     <el-card>
-      <el-form :inline="true">
+      <el-form :inline="true" :disabled="disabled">
         <el-form-item label="一级分类">
           <el-select
             v-model="category.category1Id"

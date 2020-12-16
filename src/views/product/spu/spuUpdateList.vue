@@ -361,7 +361,14 @@ export default {
             spuImageList: this.imageList,
             spuSaleAttrList: this.spuSaleAttrList,
           }
-          const result = await this.$API.spu.updateSpu(spu)
+
+          let result
+          //判断是更改还是添加spu属性
+          if (this.spu.id) {
+            result = await this.$API.spu.updateSpu(spu)
+          } else {
+            result = await this.$API.spu.saveSpu(spu)
+          }
 
           if (result.code === 200) {
             //成功跳转回spu展示列表
@@ -377,12 +384,14 @@ export default {
   async mounted() {
     //请求品牌数据
     this.getTrademarkList()
-    //请求图片数据
-    this.getSpuImageList()
     //请求销售属性列表
     this.getSaleAttrList()
-    //获取SPU销售属性列表
-    this.getSpuSaleAttrList()
+    if (this.spu.id) {
+      //请求图片数据
+      this.getSpuImageList()
+      //获取SPU销售属性列表
+      this.getSpuSaleAttrList()
+    }
   },
 }
 </script>

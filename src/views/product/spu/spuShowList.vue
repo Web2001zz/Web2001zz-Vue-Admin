@@ -1,7 +1,13 @@
 <template>
   <div>
     <el-card style="margin-top: 30px">
-      <el-button type="primary" icon="el-icon-plus">添加SPU</el-button>
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        @click="$emit('showUpdateList', { category3Id: category.category3Id })"
+        :disabled="!category.category3Id"
+        >添加SPU</el-button
+      >
 
       <el-table
         :data="spuList"
@@ -31,6 +37,7 @@
               type="danger"
               icon="el-icon-delete"
               size="mini"
+              @click="delSpu(row, row.id)"
             ></el-button>
           </template>
         </el-table-column>
@@ -92,13 +99,11 @@ export default {
       }
       this.loading = false
     },
-
     //当三级分类选中后则会触发请求SPU分类列表
     categoryChange(category) {
       this.category = category
       this.getPageList(this.page, this.limit)
     },
-
     //选中一二级分类后清空列表等
     clearList() {
       this.spuList = []
@@ -106,6 +111,12 @@ export default {
       this.limit = 3
       this.total = 0
       this.category.category3Id = ''
+    },
+    //删除spu属性
+    async delSpu(row, spuId) {
+      console.log(row, spuId)
+      await this.$API.spu.deleteSpu(spuId)
+      this.$bus.$emit('change', this.categoryChange)
     },
   },
 

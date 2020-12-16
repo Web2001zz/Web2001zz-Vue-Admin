@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 选择三级分类列表 -->
-    <Categoty />
+    <Categoty :disabled="!isShowList" />
 
     <!-- spu属性遍历展示 -->
     <SpuShowList v-if="isShowList" @showUpdateList="showUpdateList" />
@@ -27,7 +27,8 @@ export default {
     //展示更新spu列表
     showUpdateList(row) {
       this.isShowList = false
-      this.item = { ...row }
+      console.log(row);
+      this.item = { ...row } || {}
     },
     //展示spu列表
     showList(category3Id) {
