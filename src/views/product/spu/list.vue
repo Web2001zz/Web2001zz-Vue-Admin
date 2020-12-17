@@ -1,17 +1,25 @@
 <template>
   <div>
-    <!-- 选择三级分类列表 -->
-    <Categoty :disabled="!isShowList" />
+    <SkuList v-if="isShowSkuList" :spuItem="spuItem" />
+    <div v-else>
+      <!-- 选择三级分类列表 -->
+      <Categoty :disabled="!isShowList" />
 
-    <!-- spu属性遍历展示 -->
-    <SpuShowList v-if="isShowList" @showUpdateList="showUpdateList" />
+      <!-- spu属性遍历展示 -->
+      <SpuShowList
+        v-if="isShowList"
+        @showUpdateList="showUpdateList"
+        :showSpuList="showSpuList"
+      />
 
-    <!-- 更新spu数据展示 -->
-    <SpuUpdateList v-else :item="item" :showList="showList" />
+      <!-- 更新spu数据展示 -->
+      <SpuUpdateList v-else :item="item" :showList="showList" />
+    </div>
   </div>
 </template>
 
 <script>
+import SkuList from './skuList'
 import SpuShowList from './spuShowList'
 import SpuUpdateList from './spuUpdateList'
 import Categoty from '@/components/Categoty'
@@ -21,13 +29,20 @@ export default {
     return {
       isShowList: true,
       item: {},
+      isShowSkuList: false,
+      spuItem: {},
     }
   },
   methods: {
+    //传给sku管理的数据
+    showSpuList(row) {
+      this.isShowSkuList = true
+      this.spuItem = { ...row }
+    },
     //展示更新spu列表
     showUpdateList(row) {
       this.isShowList = false
-      console.log(row);
+      console.log(row)
       this.item = { ...row } || {}
     },
     //展示spu列表
@@ -43,6 +58,7 @@ export default {
     Categoty,
     SpuShowList,
     SpuUpdateList,
+    SkuList,
   },
 }
 </script>

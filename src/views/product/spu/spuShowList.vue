@@ -25,6 +25,7 @@
               type="primary"
               icon="el-icon-plus"
               size="mini"
+              @click="showSpuList({ ...row, ...category })"
             ></el-button>
             <el-button
               type="primary"
@@ -61,6 +62,9 @@
 <script>
 export default {
   name: 'spuShowList',
+  props: {
+    showSpuList: Function,
+  },
   data() {
     return {
       spuList: [],
