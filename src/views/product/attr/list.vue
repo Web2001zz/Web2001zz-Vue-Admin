@@ -107,6 +107,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import Categoty from '@/components/Categoty'
 export default {
   name: 'AttrList',
@@ -128,19 +129,35 @@ export default {
         attrName: '',
         attrValueList: [],
       },
-      category: {
-        // 代表三个分类id数据
-        category1Id: '',
-        category2Id: '',
-        category3Id: '',
-      },
+      // category: {
+      //   // 代表三个分类id数据
+      //   category1Id: '',
+      //   category2Id: '',
+      //   category3Id: '',
+      // },
     }
+  },
+  computed: {
+    ...mapState({
+      category: (state) => state.category.category,
+    }),
+  },
+  watch: {
+    'category.category3Id'(category3Id) {
+      if (!category3Id) return
+      this.getAttrList()
+    },
+    'category.category2Id'() {
+      this.clearList()
+    },
+    'category.category1Id'() {
+      this.clearList()
+    },
   },
   methods: {
     //在父组件绑定获取所有的属性列表
-    async getAttrList(category) {
-      this.category = category
-      const result = await this.$API.attrs.getAttrList(category)
+    async getAttrList() {
+      const result = await this.$API.attrs.getAttrList(this.category)
       if (result.code === 200) {
         this.attrList = result.data
       } else {
@@ -214,20 +231,27 @@ export default {
       if (result.code == 200) {
         this.$message.success('保存成功')
         this.isShowList = true
-        this.getAttrList(this.category)
+        this.getAttrList()
       } else {
         this.$message.error(result.message)
       }
+    },
+    clearList() {
+      // 清空数据
+      this.attrList = []
+      // 禁用按钮
+      this.category.category3Id = ''
     },
   },
 
   mounted() {
     //获取列表
-    this.$bus.$on('change', this.getAttrList)
+    //this.$bus.$on('change', this.getAttrList)
   },
   //使用全局事件总线需要在路由卸载阶段解绑 避免重复绑定事件
   beforeDestroy() {
-    this.$bus.$on('change', this.getAttrList)
+    //this.$bus.$on('change', this.getAttrList)beforeDestroy() {
+    this.$store.commit('category/RESET_CATEGORY_ID')
   },
   components: {
     Categoty,

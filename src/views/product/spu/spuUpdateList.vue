@@ -130,7 +130,7 @@
         <!-- 保存取消按钮 -->
         <el-form-item>
           <el-button type="primary" @click="save">保存</el-button>
-          <el-button @click="showList(spu.category3Id)">取消</el-button>
+          <el-button @click="showList">取消</el-button>
         </el-form-item>
       </el-form>
       <!-- 预览图片 -->
@@ -142,6 +142,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'spuUpdateList',
   props: {
@@ -170,6 +171,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      category: (state) => state.category.category,
+    }),
     //SPU属性的图片
     formatImageList() {
       return this.imageList.map((img) => {
@@ -358,6 +362,7 @@ export default {
           //收集参数
           const spu = {
             ...this.spu,
+            category3Id: this.category.category3Id,
             spuImageList: this.imageList,
             spuSaleAttrList: this.spuSaleAttrList,
           }
@@ -372,7 +377,7 @@ export default {
 
           if (result.code === 200) {
             //成功跳转回spu展示列表
-            this.showList(this.spu.category3Id)
+            this.showList()
             this.$message.success('SPU属性保存成功')
           } else {
             this.$message.error(result.error)

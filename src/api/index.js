@@ -8,4 +8,5 @@ export { default as order } from './order'
 export { default as attrs } from './product/attrs'
 export { default as spu } from './product/spu'
 export { default as trademark } from './product/trademark'
+export { default as sku } from './product/sku'
 //接口文档 http://182.92.128.115:8206/swagger-ui.html

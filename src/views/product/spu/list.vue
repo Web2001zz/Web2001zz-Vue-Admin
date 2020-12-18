@@ -1,6 +1,6 @@
 <template>
   <div>
-    <SkuList v-if="isShowSkuList" :spuItem="spuItem" />
+    <SkuList v-if="isShowSkuList" :spuItem="spuItem" :showList="showList"/>
     <div v-else>
       <!-- 选择三级分类列表 -->
       <Categoty :disabled="!isShowList" />
@@ -48,11 +48,15 @@ export default {
     //展示spu列表
     showList(category3Id) {
       this.isShowList = true
+      this.isShowSkuList = false
       //需要等待页面组件加载完成后才能进行调用
-      this.$nextTick(() => {
-        this.$bus.$emit('change', { category3Id })
-      })
+      // this.$nextTick(() => {
+      //   this.$bus.$emit('change', { category3Id })
+      // })
     },
+  },
+  beforeDestroy() {
+    this.$store.commit('category/RESET_CATEGORY_ID')
   },
   components: {
     Categoty,

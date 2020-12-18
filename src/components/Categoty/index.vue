@@ -51,6 +51,7 @@
 </template>
 
 <script>
+import { mapState, mapActions, mapMutations } from 'vuex'
 export default {
   name: 'category',
   props: ['disabled'],
@@ -63,67 +64,47 @@ export default {
         category2Id: '',
         category3Id: '',
       },
-      //一级分类数据 列表
-      category1List: [],
-      category2List: [],
-      category3List: [],
     }
+  },
+  computed: {
+    ...mapState({
+      category1List: (state) => state.category.category1List,
+      category2List: (state) => state.category.category2List,
+      category3List: (state) => state.category.category3List,
+    }),
   },
 
   methods: {
+    ...mapMutations(['category/SET_CATEGORY3_ID']),
+    ...mapActions([
+      'category/getCategory1List',
+      'category/getCategory2List',
+      'category/getCategory3List',
+    ]),
     //输入框的change事件 选择一级分类id获取二级分类
     async selectChange1(category1Id) {
       //当一级分类更新时二三级清空一次
       this.category.category2Id = ''
       this.category.category3Id = ''
-      this.category2List = []
-      this.category3List = []
-      const result = await this.$API.attrs.getCategorys2(category1Id)
-      if (result.code === 200) {
-        this.category2List = result.data
-      } else {
-        this.$message.error(result.message)
-      }
+      this['category/getCategory2List'](category1Id)
+      // this.$bus.$emit('clearList')
     },
     //选择二级分类Id获取三级分类
     async selectChange2(category2Id) {
       //三级分类清空一次
-      this.category3List = []
       this.category.category3Id = ''
-      const result = await this.$API.attrs.getCategorys3(category2Id)
-      if (result.code === 200) {
-        this.category3List = result.data
-      } else {
-        this.$message.error(result.message)
-      }
+      this['category/getCategory3List'](category2Id)
+      // this.$bus.$emit('clearList')
     },
     //选择三级分类Id时获取属性列表
     async selectChange3(category3Id) {
-      const category = {
-        ...this.category,
-        category3Id,
-      }
-      /* const result = await this.$API.attrs.getAttrList(category)
-      if (result.code === 200) {
-        //通过自定义事件把请求回来的属性列表传给父级组件
-        console.log(result.data, '200')
-        this.$emit('change', result.data)
-      } else {
-        this.$message.error(result.message)
-      } */
-      //改为使用全局事件总线发送请求
-      this.$bus.$emit('change', category)
+      this['category/SET_CATEGORY3_ID'](category3Id)
     },
   },
 
   async mounted() {
     //加载阶段获取一级分类
-    const result = await this.$API.attrs.getCategorys1()
-    if (result.code === 200) {
-      this.category1List = result.data
-    } else {
-      this.$message.error(result.message)
-    }
+    this['category/getCategory1List']()
   },
 }
 </script>

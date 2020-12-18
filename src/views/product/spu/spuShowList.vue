@@ -60,6 +60,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'spuShowList',
   props: {
@@ -75,14 +76,33 @@ export default {
       limit: 3,
       total: 0,
       //三级分类
-      category: {
-        category1Id: '',
-        category2Id: '',
-        category3Id: '',
-      },
+      // category: {
+      //   category1Id: '',
+      //   category2Id: '',
+      //   category3Id: '',
+      // },
     }
   },
-
+  watch: {
+    'category.category3Id': {
+      handler(category3Id) {
+        if (!category3Id) return
+        this.getPageList(this.page, this.limit)
+      },
+      immediate: true, //一上来触发一次
+    },
+    'category.category2Id'() {
+      this.clearList()
+    },
+    'category.category1Id'() {
+      this.clearList()
+    },
+  },
+  computed: {
+    ...mapState({
+      category: (state) => state.category.category,
+    }),
+  },
   methods: {
     //获取SPU分页列表
     async getPageList(page, limit) {
@@ -104,10 +124,9 @@ export default {
       this.loading = false
     },
     //当三级分类选中后则会触发请求SPU分类列表
-    categoryChange(category) {
-      this.category = category
-      this.getPageList(this.page, this.limit)
-    },
+    // categoryChange(category) {
+    //   this.getPageList(this.page, this.limit)
+    // },
     //选中一二级分类后清空列表等
     clearList() {
       this.spuList = []
@@ -125,12 +144,12 @@ export default {
   },
 
   mounted() {
-    this.$bus.$on('change', this.categoryChange)
-    this.$bus.$on('clearList', this.clearList)
+    //this.$bus.$on('change', this.categoryChange)
+    //this.$bus.$on('clearList', this.clearList)
   },
   beforeDestroy() {
-    this.$bus.$off('change', this.categoryChange)
-    this.$bus.$off('clearList', this.clearList)
+    //this.$bus.$off('change', this.categoryChange)
+    //this.$bus.$off('clearList', this.clearList)
   },
 }
 </script>
